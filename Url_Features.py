@@ -1,18 +1,10 @@
 
 # This file contains all the feature extraction functions.
 # Each function extracts a particular feature from URL
-
-import re
+ 
 from urllib.parse import urlparse
-
-
-# First Directory Length
-def fd_length(url):
-    urlpath = urlparse(url).path
-    try:
-        return len(urlpath.split('/')[1])
-    except:
-        return 0
+import socket
+import re
 
 
 def digit_count(url):
@@ -23,6 +15,8 @@ def digit_count(url):
     return digits
 
 
+
+
 def letter_count(url):
     letters = 0
     for i in url:
@@ -31,34 +25,34 @@ def letter_count(url):
     return letters
 
 
+
+
 def no_of_dir(url):
     urldir = urlparse(url).path
     return urldir.count('/')
 
 
+ 
+
 # Use of IP or not in domain
 def having_ip_address(url):
-    match = re.search(
-        # IPv4 in hexadecimal
-        '(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.'
-        '([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\/)|'  # IPv4
-        '((0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\/)'
-        '(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}', url)  # Ipv6
-    if match:
-        # print match.group()
+    try:
+        hostname = urlparse(url).netloc
+        print(hostname)
+        socket.gethostbyname(hostname)
         return -1
-    else:
-        # print 'No matching pattern found'
+    except:
         return 1
-
-
+    
 
 def hostname_length(url):
     return len(urlparse(url).netloc)
 
 def url_length(url):
-    return len(urlparse(url).path)
+    return len(url)
 
+def urlpath_length(url):
+    return len(urlparse(url).path)
 
 # Gets all count features
 def get_counts(url):
@@ -68,16 +62,19 @@ def get_counts(url):
     i = url.count('-')
     count_features.append(i)
 
-    i = url.count('@')
+    i = url.count('/')
     count_features.append(i)
 
-    i = url.count('?')
+    i = url.count('@')
     count_features.append(i)
 
     i = url.count('%')
     count_features.append(i)
 
     i = url.count('.')
+    count_features.append(i)
+    
+    i = url.count('?')
     count_features.append(i)
 
     i = url.count('=')
@@ -94,4 +91,18 @@ def get_counts(url):
 
     return count_features
 
-
+# use of url shortening service
+def shortening_service(url):
+    match = re.search('bit\.ly|goo\.gl|shorte\.st|go2l\.ink|x\.co|ow\.ly|t\.co|tinyurl|tr\.im|is\.gd|cli\.gs|'
+                      'yfrog\.com|migre\.me|ff\.im|tiny\.cc|url4\.eu|twit\.ac|su\.pr|twurl\.nl|snipurl\.com|'
+                      'short\.to|BudURL\.com|ping\.fm|post\.ly|Just\.as|bkite\.com|snipr\.com|fic\.kr|loopt\.us|'
+                      'doiop\.com|short\.ie|kl\.am|wp\.me|rubyurl\.com|om\.ly|to\.ly|bit\.do|t\.co|lnkd\.in|'
+                      'db\.tt|qr\.ae|adf\.ly|goo\.gl|bitly\.com|cur\.lv|tinyurl\.com|ow\.ly|bit\.ly|ity\.im|'
+                      'q\.gs|is\.gd|po\.st|bc\.vc|twitthis\.com|u\.to|j\.mp|buzurl\.com|cutt\.us|u\.bb|yourls\.org|'
+                      'x\.co|prettylinkpro\.com|scrnch\.me|filoops\.info|vzturl\.com|qr\.net|1url\.com|tweez\.me|v\.gd|'
+                      'tr\.im|link\.zip\.net',
+                      url)
+    if match:
+        return -1
+    else:
+        return 1
